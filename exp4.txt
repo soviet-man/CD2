@@ -1,0 +1,64 @@
+import java.util.*; 
+public class Main { 
+ public static void main(String[] args) { 
+  Scanner scanner = new Scanner(System.in); 
+  System.out.println("Enter the number of productions: "); 
+  int n = scanner.nextInt(); 
+  scanner.nextLine(); 
+  String[] nonTerminals = new String[n]; 
+  String[] productions = new String[n]; 
+  System.out.println("Enter the production rules(e.g., A->ab|ac|d) : "); 
+  for (int i = 0; i < n; i++) { 
+   String production = scanner.nextLine(); 
+   String[] split = production.split("->"); 
+   nonTerminals[i] = split[0].trim(); 
+   productions[i] = split[1].trim(); 
+  } 
+  for (int i = 0; i < n; i++) { 
+   leftFactor(nonTerminals[i], productions[i]); 
+  } 
+  scanner.close(); 
+ } 
+ public static void leftFactor(String nonTerminal, String production) { 
+  String[] rules = production.split("\\|"); 
+  String commonPrefix = findCommonPrefix(rules); 
+  if (commonPrefix.isEmpty()) { 
+   System.out.println(nonTerminal + " -> " + production); 
+  } else { 
+   String newNonTerminal = nonTerminal + "'"; 
+   StringBuilder newProduction = new StringBuilder(); 
+   StringBuilder newNonTerminalProduction = new 
+StringBuilder(); 
+   for (String rule : rules) { 
+    if (rule.startsWith(commonPrefix)) { 
+     String suffix = 
+rule.substring(commonPrefix.length()); 
+    
+ newNonTerminalProduction.append(suffix.isEmpty() ? "N5" : 
+suffix).append("|"); 
+    } else { 
+     newProduction.append(rule).append("|"); 
+    } 
+   } 
+  
+ newProduction.append(commonPrefix).append(newNonTerminal); 
+  
+ newNonTerminalProduction.setLength(newNonTerminalProduction.length() - 
+1); 
+   System.out.println(nonTerminal + " -> " + newProduction); 
+   System.out.println(newNonTerminal + " -> " + 
+newNonTerminalProduction); 
+  } 
+ } 
+ public static String findCommonPrefix(String[] rules) { 
+  if (rules.length == 0) return ""; 
+  String prefix = rules[0]; 
+  for (int i = 1; i < rules.length; i++) { 
+   while (!rules[i].startsWith(prefix)) { 
+    if (prefix.isEmpty()) return ""; 
+    prefix = prefix.substring(0, prefix.length() - 1); 
+   } 
+  } 
+  return prefix; 
+ } 
+} 
